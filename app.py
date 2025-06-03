@@ -11,6 +11,21 @@ from nltk.stem.porter import PorterStemmer
 # Download necessary NLTK resources only once
 # Check and download necessary NLTK resources
 
+@st.cache_resource
+def setup_nltk():
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except LookupError:
+        nltk.download('punkt')
+    
+    try:
+        nltk.data.find('corpora/stopwords')
+    except LookupError:
+        nltk.download('stopwords')
+
+setup_nltk()
+
+
 print("NLTK paths:", nltk.data.path)
 
 
