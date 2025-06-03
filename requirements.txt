@@ -1,4 +1,4 @@
-nltk
 streamlit
-vectorizer
-model
+nltk
+scikit-learn
+pandas
