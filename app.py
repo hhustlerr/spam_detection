@@ -1,26 +1,32 @@
 import streamlit as st
 import pickle
 import string
+
 import nltk
+nltk.data.path.append('nltk_data')
+
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
-# Setup NLTK
-@st.cache_resource
-def setup_nltk():
-    try:
-        nltk.data.find('tokenizers/punkt')
-    except LookupError:
-        nltk.download('punkt')
-    try:
-        nltk.data.find('corpora/stopwords')
-    except LookupError:
-        nltk.download('stopwords')
+# Download necessary NLTK resources only once
+# Check and download necessary NLTK resources
 
-setup_nltk()
+print("NLTK paths:", nltk.data.path)
 
-# Preprocessor
+
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt', download_dir='nltk_data')
+
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords', download_dir='nltk_data')
+
 ps = PorterStemmer()
+
+nltk.data.path.append('nltk_data')
 
 def transform_text(text):
     text = text.lower()
@@ -46,19 +52,12 @@ def transform_text(text):
 
     return " ".join(y)
 
-# Load model and vectorizer
-@st.cache_resource
-def load_model_and_vectorizer():
-    with open('vectorizer.pkl', 'rb') as f:
-        tfidf = pickle.load(f)
-    with open('model.pkl', 'rb') as f:
-        model = pickle.load(f)
-    return tfidf, model
-
-tfidf, model = load_model_and_vectorizer()
+# Load models
+tfidf = pickle.load(open('vectorizer.pkl', 'rb'))   # rb is read binary mode
+model = pickle.load(open('model.pkl', 'rb'))
 
 # Streamlit UI
-st.title("📩 Email/SMS Spam Classifier")
+st.title("Email/SMS Spam Classifier")
 
 input_sms = st.text_area("Enter the message")
 
@@ -71,6 +70,6 @@ if st.button('Predict'):
     result = model.predict(vector_input)[0]
     # 4. Display result
     if result == 1:
-        st.error("🚫 Spam")
+        st.header("Spam")
     else:
-        st.success("✅ Not Spam")
+        st.header("Not Spam")
