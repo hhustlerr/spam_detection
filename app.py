@@ -61,6 +61,7 @@ if st.button('Predict'):
     result = model.predict(vector_input)[0]
 
     if result == 1:
-        st.error("🚫 Spam")
+        st.error("Spam")
     else:
-        st.success("✅ Not Spam")
+        st.success("Not Spam")
+
